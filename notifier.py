@@ -106,9 +106,6 @@ def check_stock(driver: webdriver.Chrome):
             print(f"{title}: IN STOCK — sending Discord notification!")
             asyncio.run(send_discord_notification(title))
 
-    input("\nPress Enter to close the browser...")
-
-
 if __name__ == "__main__":
     driver = build_driver()
     try:
