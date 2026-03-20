@@ -93,7 +93,7 @@ To send notifications to a Discord channel instead of DMs, uncomment the relevan
 
 Key libraries used:
 - **discord.py** - Discord bot communication
-- **selenium** - Web browser automation
+- **selenium** - Web browser scraping/automation
 - **webdriver-manager** - Automatic Chrome driver management
 - **python-dotenv** - Environment variable management
 
