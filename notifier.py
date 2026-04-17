@@ -17,7 +17,7 @@ load_dotenv()
 
 URL = "https://store.steampowered.com/steamdeck/"
 
-CARD_CLASS = "_1GzH4ChDWcNv3vCKTlSIfb"
+CARD_CLASS = "reservation_ctn"
 OUT_OF_STOCK_CLASS = "ReservationUnavailable"
 
 DECK_MODELS = ["512GB OLED", "1TB OLED"] # Steam Deck models to check for stock
@@ -71,38 +71,28 @@ def check_stock(driver: webdriver.Chrome):
 
     driver.get(URL)
 
-    # Wait up to 20 seconds for product cards to appear in the DOM
     WebDriverWait(driver, 20).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, f".{CARD_CLASS}"))
     )
 
-    # Grab all Steam Deck product cards on the page
     cards = driver.find_elements(By.CSS_SELECTOR, f".{CARD_CLASS}")
     print(f"Found {len(cards)} Steam Deck card(s)\n")
 
     for card in cards:
-        # Extract the full model name from the .skutype div and its subelements
         try:
             sku_div = card.find_element(By.CSS_SELECTOR, ".skutype")
-            span_text = sku_div.find_element(By.TAG_NAME, "span").text.strip()
-            full_text = sku_div.text.strip()
-            direct_text = full_text.replace(span_text, "").strip()
-            title = f"{direct_text} {span_text}".strip()
+            title = sku_div.text.strip()
         except:
             title = "(title not found)"
 
-         # Skip models that are no longer purchasable (LCD models)
         if not any(model in title for model in DECK_MODELS):
             print(f"Skipping {title}")
-            continue
+            continue # go to next card
 
-        # If the out-of-stock div exists inside this card, the model is unavailable
-        unavailable = card.find_elements(By.CSS_SELECTOR, f".{OUT_OF_STOCK_CLASS}")
-
-        if unavailable:
+        buttons = card.find_elements(By.CSS_SELECTOR, f".{OUT_OF_STOCK_CLASS} button")
+        if buttons and "Disabled" in buttons[0].get_attribute("class"):
             print(f"{title}: OUT OF STOCK")
         else:
-            # Out-of-stock div is absent —> model is available
             print(f"{title}: IN STOCK — sending Discord notification!")
             asyncio.run(send_discord_notification(title))
 
