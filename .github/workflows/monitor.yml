@@ -2,7 +2,8 @@ name: Steam Deck Restock Monitor
 
 on:
   schedule:
-    - cron: '*/25 * * * *'  # Runs every 25 minutes
+    # Runs every 25 minutes
+    - cron: '*/25 * * * *'  
   workflow_dispatch:          # Allows you to manually trigger the workflow from GitHub UI
 
 jobs:
@@ -12,11 +13,11 @@ jobs:
     steps:
       # Step 1: Pull your code from the repo
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Step 2: Set up Python
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.14'
 
@@ -26,7 +27,7 @@ jobs:
 
       # Step 4: Install Chrome (pre-installed on ubuntu-latest but this ensures latest version)
       - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
 
       # Step 5: Run the stock checker
       # Secrets are stored in GitHub repo Settings → Secrets and variables → Actions
